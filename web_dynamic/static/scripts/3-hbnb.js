@@ -2,7 +2,6 @@ const listAmenities = [];
 
 $(document).ready(function () {
   getStatus();
-  getPlaces();
   $('input[type="checkbox"]').change(checkboxChange);
 });
 
@@ -54,6 +53,7 @@ function getStatus () {
     function (data, status) {
       if (data.status === 'OK') {
         $('DIV#api_status').addClass('available');
+        getPlaces();
       } else {
         $('DIV#api_status').removeClass('available');
       }
@@ -64,25 +64,73 @@ function getStatus () {
 /**
  * getPlaces - gets all places from the API
  */
-function getPlaces() {
-  /* const data = {'content-type': 'application/json'} */
-  /* $.post('http://localhost:5001/api/v1/places_search/', {},
-    function (result) {
-      console.log(result[0]);
-      console.log("paso");
-    },
-    'json'
-  ); */
-  console.log("finish");
+function getPlaces () {
+  $.ajax({
+    type: 'POST',
+    url: 'http://localhost:5001/api/v1/places_search/',
+    data: '{}',
+    ContentType: 'application/json',
+    headers: { 'Content-Type': 'application/json' },
+    dataType: 'json',
+    success: function (response) {
+      showPlaces(response);
+    }
+  });
 }
-$.ajax({
-  type: 'POST',
-  url: 'http://localhost:5001/api/v1/places_search/',
-  data: '{}',
-  ContentType: 'application/json',
-  headers: {'Content-Type': 'application/json'},
-  dataType: 'json',
-  success: function (response) {
-    console.log(response[0]);
-  }
-});
+
+/**
+ * showPlaces - creates and show all places in the html
+ * with the API request information
+ *
+ * @param {Array} listPlaces
+ */
+function showPlaces (listPlaces) {
+  listPlaces.forEach(place => {
+    // creating principal elements
+    const article = $('<article></article>');
+    const divTitle = $('<div class="title_box"></div>');
+    const divInfo = $('<div class="information"></div>');
+    const divDesc = $('<div class="description"></div>');
+
+    // method html because the place.description is in html format
+    divDesc.html(place.description);
+
+    // creating elements of the divTitle
+    /**
+     * <h2>#Beautiful Studio in Waikiki</h2>
+     * <div class="price_by_night">$119</div>
+    */
+    const title = '<h2>' + place.name + '</h2>';
+    let divPrice = '<div class="price_by_night">$';
+    divPrice += place.price_by_night + '</div>';
+
+    // creating elements of the divTitle
+    /**
+     * <div class="max_guest">2 Guests</div>
+     * <div class="number_rooms">0 Bedrooms</div>
+     * <div class="number_bathrooms">1 Bathroom</div>
+    */
+    let divGuest = '<div class="max_guest">' + place.max_guest;
+    divGuest += ' Guests</div>';
+    let divRooms = '<div class="number_rooms">' + place.number_rooms;
+    divRooms += ' Bedrooms</div>';
+    let divBathrooms = '<div class="number_bathrooms">';
+    divBathrooms += place.number_bathrooms + ' Bathroom</div>';
+
+    // adding elements to the divs
+    divTitle.append(title);
+    divTitle.append(divPrice);
+
+    divInfo.append(divGuest);
+    divInfo.append(divRooms);
+    divInfo.append(divBathrooms);
+
+    // adding elements to article
+    article.append(divTitle);
+    article.append(divInfo);
+    article.append(divDesc);
+
+    // adding article to HTML
+    $('SECTION.places').append(article);
+  });
+}
