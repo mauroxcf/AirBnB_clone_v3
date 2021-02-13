@@ -1,4 +1,5 @@
 const listAmenities = [];
+const listIdAmenities = [];
 
 $(document).ready(function () {
   getStatus();
@@ -10,6 +11,7 @@ $(document).ready(function () {
  */
 function checkboxChange () {
   const amenityName = $(this).data('name');
+  const amenityId = $(this).data('id');
 
   if (!this.checked) {
     // searchs the index in the list if not is in the list return -1
@@ -21,6 +23,7 @@ function checkboxChange () {
       * and the second is how many elements going to delete
       */
       listAmenities.splice(index, 1);
+      listIdAmenities.splice(index, 1);
     }
 
     showListAmenities();
@@ -28,6 +31,7 @@ function checkboxChange () {
   }
 
   listAmenities.push(amenityName);
+  listIdAmenities.push(amenityId);
 
   showListAmenities();
 }

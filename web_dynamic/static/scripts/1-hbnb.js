@@ -1,4 +1,5 @@
 const listAmenities = [];
+const listIdAmenities = [];
 
 $(document).ready(function () {
   $('input[type="checkbox"]').change(function () {
@@ -7,6 +8,7 @@ $(document).ready(function () {
 
     /* const amenityID = $(this).data('id'); */
     const amenityName = $(this).data('name');
+    const amenityId = $(this).data('id');
 
     if (!this.checked) {
       // searchs the index in the list if not is in the list return -1
@@ -15,6 +17,7 @@ $(document).ready(function () {
       if (index !== -1) {
         // se coloca el indice y el numero de elementos a eliminar
         listAmenities.splice(index, 1);
+        listIdAmenities.splice(index, 1);
       }
 
       showListAmenities();
@@ -22,6 +25,7 @@ $(document).ready(function () {
     }
 
     listAmenities.push(amenityName);
+    listIdAmenities.push(amenityId);
     console.log(listAmenities);
 
     showListAmenities();
